@@ -139,7 +139,7 @@ nets = dict(
     liquidcoin=math.Object(
         P2P_PREFIX='d23ddfba'.decode('hex'),
         P2P_PORT=9333,
-        ADDRESS_VERSION=48,
+        ADDRESS_VERSION=133,
         RPC_PORT=9332,
         RPC_CHECK=defer.inlineCallbacks(lambda bitcoind: defer.returnValue(
             'liquidcoinaddress' in (yield bitcoind.rpc_help()) and
