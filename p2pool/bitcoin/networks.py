@@ -6,6 +6,19 @@ from twisted.internet import defer
 from . import data
 from p2pool.util import math, pack
 
+
+def lqcsubsudy(nHeight):
+    nSubsidy = 50.0
+    temp2 = 50.0
+    while nHeight > 1000:
+        temp2 *= 0.96
+        nHeight -= 1000
+    if(temp2 < 1 ):
+        temp2 = 1
+    nSubsidy = temp2
+    return nSubsidy
+
+
 nets = dict(
     bitcoin=math.Object(
         P2P_PREFIX='f9beb4d9'.decode('hex'),
@@ -123,7 +136,25 @@ nets = dict(
         SANE_TARGET_RANGE=(2**256//1000000000 - 1, 2**256 - 1),
         DUMB_SCRYPT_DIFF=2**16,
     ),
-
+    liquidcoin=math.Object(
+        P2P_PREFIX='d23ddfba'.decode('hex'),
+        P2P_PORT=9333,
+        ADDRESS_VERSION=48,
+        RPC_PORT=9332,
+        RPC_CHECK=defer.inlineCallbacks(lambda bitcoind: defer.returnValue(
+            'liquidcoinaddress' in (yield bitcoind.rpc_help()) and
+            not (yield bitcoind.rpc_getinfo())['testnet']
+        )),
+        SUBSIDY_FUNC=lqcsubsudy,
+        POW_FUNC=lambda data: pack.IntType(256).unpack(__import__('ltc_scrypt').getPoWHash(data)),
+        BLOCK_PERIOD=150, # s
+        SYMBOL='LQC',
+        CONF_FILE_FUNC=lambda: os.path.join(os.path.join(os.environ['APPDATA'], 'Liquidcoin') if platform.system() == 'Windows' else os.path.expanduser('~/Library/Application Support/Liquidcoin/') if platform.system() == 'Darwin' else os.path.expanduser('~/.liquidcoin'), 'liquidcoin.conf'),
+        BLOCK_EXPLORER_URL_PREFIX='http://example.com/block/',
+        ADDRESS_EXPLORER_URL_PREFIX='http://example.com/address/',
+        SANE_TARGET_RANGE=(2**256//1000000000 - 1, 2**256//1000 - 1),
+        DUMB_SCRYPT_DIFF=2**16,
+    ),
     terracoin=math.Object(
         P2P_PREFIX='42babe56'.decode('hex'),
         P2P_PORT=13333,

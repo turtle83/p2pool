@@ -81,7 +81,24 @@ nets = dict(
         ANNOUNCE_CHANNEL='#p2pool-alt',
         VERSION_CHECK=lambda v: True,
     ),
-
+    liquidcoin=math.Object(
+        PARENT=networks.nets['liquidcoin'],
+        SHARE_PERIOD=10, # seconds
+        CHAIN_LENGTH=24*60*60//10, # shares
+        REAL_CHAIN_LENGTH=24*60*60//10, # shares
+        TARGET_LOOKBEHIND=200, # shares
+        SPREAD=12, # blocks
+        IDENTIFIER='596944f6c47beae5'.decode('hex'),
+        PREFIX='fd69977deb14e159'.decode('hex'),
+        P2P_PORT=9338,
+        MIN_TARGET=0,
+        MAX_TARGET=2**256//2**20 - 1,
+        PERSIST=True,
+        WORKER_PORT=9327,
+        BOOTSTRAP_ADDRS=''.split(' '),
+        ANNOUNCE_CHANNEL='#p2pool-alt',
+        VERSION_CHECK=lambda v: True,
+    ),
     terracoin=math.Object(
         PARENT=networks.nets['terracoin'],
         SHARE_PERIOD=30, # seconds
